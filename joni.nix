@@ -4,13 +4,7 @@
     ./zsh.nix
   ];
 
-  home.file = lib.mkMerge [{
-    "./.gitconfig".source = ./configs/gitconfig;
-    ".powerlevel10k".source = ./configs/p10k.zsh;
-  }];
-
   home.packages = with pkgs; [
-    neovim
     git
     htop
     zsh-powerlevel10k

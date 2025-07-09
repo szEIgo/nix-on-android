@@ -3,6 +3,10 @@
 {
   # Simply install just the packages
   environment.packages = with pkgs; [
+     git
+     htop
+     zsh-powerlevel10k
+     oh-my-zsh
     vim
     procps
     killall

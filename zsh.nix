@@ -94,7 +94,7 @@ in
     };
 
     # 2. Tell .zshrc to source the file we just created
-    initExtra = "source ''${HOME}/.zsh_custom";
+    initExtra = "source ''/data/data/com.termux.nix/files/home/.zsh_custom";
   };
 
   programs.keychain.enable = true;

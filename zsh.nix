@@ -1,17 +1,69 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Define the path to your SSH key
   sshKey = "~/.ssh/id_ed25519";
+
+  zsh_custom_script = ''
+    # --- Custom Zsh Configuration ---
+
+    # Locale settings
+    export LANG=en_US.UTF-8
+    export LC_ALL=en_US.UTF-8
+
+    # Zsh history settings
+    setopt HIST_FCNTL_LOCK
+    setopt HIST_IGNORE_DUPS
+    setopt HIST_IGNORE_SPACE
+    setopt SHARE_HISTORY
+    HIST_STAMPS="mm/dd/yyyy"
+
+    # Powerlevel10k theme
+    source "''${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
+    [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+
+    # SSH agent setup function
+    ssh_session() {
+      if [ -z "$SSH_AUTH_SOCK" ]; then
+        eval "$(ssh-agent -s)"
+      fi
+      if ! ssh-add -l &>/dev/null; then
+        ssh-add ${sshKey} &>/dev/null
+      fi
+    }
+
+    # Override common commands to ensure the SSH agent is running
+    ssh() {
+      ssh_session
+      command ssh -X -CY -o ServerAliveInterval=120 "$@"
+    }
+    scp() {
+      ssh_session
+      command scp -C -v -r -o StrictHostKeyChecking=no "$@"
+    }
+    git() {
+      ssh_session
+      command git "$@"
+    }
+
+    # SDKMAN initialization
+    export SDKMAN_DIR="$HOME/.sdkman"
+    [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+
+    # SSH Keychain
+    eval "$(keychain --eval --quiet --quick --noask --timeout 240 ${sshKey})"
+
+    # Keybindings for Zsh
+    bindkey "^[[3~" delete-char
+    bindkey "^[[5~" beginning-of-buffer-or-history
+    bindkey "^[[6~" end-of-buffer-or-history
+  '';
+
 in
 {
-  programs.zellij = {
-    enable = true;
-    enableZshIntegration = true;
-    settings = {
-      default_layout = "compact";
-      default_shell = "zsh";
-    };
+  # 1. Create a file in the home directory with our script
+  home.file.".zsh_custom" = {
+    text = zsh_custom_script;
+    executable = true;
   };
 
   programs.zsh = {
@@ -21,7 +73,7 @@ in
 
     oh-my-zsh = {
       enable = true;
-      theme = ""; # An empty theme is needed to use an external one like Powerlevel10k
+      theme = "";
       plugins = [
         "git"
         "sudo"
@@ -29,16 +81,6 @@ in
         "cp"
         "history"
         "colorize"
-        # The following plugins might not be as useful on Android
-        # but are kept as per your original config.
-        "terraform"
-        "systemadmin"
-        "scala"
-        "rust"
-        "redis-cli"
-        "kubectl"
-        "podman"
-        "aws"
       ];
     };
 
@@ -46,13 +88,13 @@ in
       l = "eza --icons";
       la = "eza --icons -a";
       ll = "eza --icons -lah";
-      ls = "eza --icons --color=auto";
       docker = "podman";
       vim = "hx";
-      cat = "bat --style plain --pager never"; # Alias for bat
-      sw_debian = "ssh -J bastion@51.158.121.209:61000 root@172.16.16.5";
-      sw_ubuntu = "ssh -J bastion@51.15.132.29:61000 root@172.16.4.2";
+      cat = "bat --style plain --pager never";
     };
+
+    # 2. Tell .zshrc to source the file we just created
+    initExtra = "source ''${HOME}/.zsh_custom";
   };
 
   programs.keychain.enable = true;
@@ -61,6 +103,6 @@ in
     zsh-powerlevel10k
     eza
     bat
-    # zoxide # Uncomment if you use it
+    keychain
   ];
 }

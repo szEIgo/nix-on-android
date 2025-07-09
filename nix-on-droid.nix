@@ -49,6 +49,7 @@
     wireguard-tools
     atop
     netdata
+    openssh
   ];
 
   environment.etcBackupExtension = ".bak";

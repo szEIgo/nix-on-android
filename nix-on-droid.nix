@@ -3,6 +3,7 @@
 {
   # Simply install just the packages
   environment.packages = with pkgs; [
+    zellij
     fzf
      git
      htop

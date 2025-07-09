@@ -11,6 +11,17 @@
     oh-my-zsh
   ];
   programs.git.enable = true;
+  programs.zellij = {
+      enable = true;
+      enableZshIntegration = true;
+      settings = {
+        default_layout = "compact";
+        default_shell = "zsh";
+      };
+    };
+
+    programs.fzf.enable = true;
+
   programs.zoxide.enable = true;
   programs.zoxide.enableZshIntegration = true;
   programs.helix = {

@@ -4,8 +4,6 @@ let
   sshKey = "~/.ssh/id_ed25519";
 
   zsh_custom_script = ''
-    # --- Custom Zsh Configuration ---
-
     # Locale settings
     export LANG=en_US.UTF-8
     export LC_ALL=en_US.UTF-8
@@ -18,8 +16,8 @@ let
     HIST_STAMPS="mm/dd/yyyy"
 
     # Powerlevel10k theme
-    source "''${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
-    [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+    # source "''${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme"
+    # [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
     # SSH agent setup function
     ssh_session() {
@@ -45,9 +43,6 @@ let
       command git "$@"
     }
 
-    # SDKMAN initialization
-    export SDKMAN_DIR="$HOME/.sdkman"
-    [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
 
     # SSH Keychain
     eval "$(keychain --eval --quiet --quick --noask --timeout 240 ${sshKey})"
@@ -71,9 +66,11 @@ in
     enableCompletion = true;
     autocd = true;
 
+   enableFzfHistory.enable = true;
+
     oh-my-zsh = {
       enable = true;
-      theme = "";
+      theme = "cloud";
       plugins = [
         "git"
         "sudo"
@@ -91,6 +88,7 @@ in
       docker = "podman";
       vim = "hx";
       cat = "bat --style plain --pager never";
+      build = "nix-on-droid build --flake /data/data/com.termux.nix/files/home/.config/nix-on-droid";
     };
 
     # 2. Tell .zshrc to source the file we just created

@@ -3,6 +3,7 @@
 {
   # Simply install just the packages
   environment.packages = with pkgs; [
+    fzf
      git
      htop
      zsh-powerlevel10k

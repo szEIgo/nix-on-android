@@ -1,14 +1,18 @@
 { config, lib, pkgs, ... }:
 
 {
+
+  environment.motd = null;
+  user.shell = "${pkgs.zsh}/bin/zsh";
   # Simply install just the packages
   environment.packages = with pkgs; [
     zellij
+    gawk
     fzf
-     git
-     htop
-     zsh-powerlevel10k
-     oh-my-zsh
+    git
+    htop
+    zsh-powerlevel10k
+    oh-my-zsh
     vim
     procps
     killall

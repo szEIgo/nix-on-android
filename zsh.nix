@@ -53,8 +53,7 @@ let
     bindkey "^[[6~" end-of-buffer-or-history
   '';
 
-in
-{
+in {
   # 1. Create a file in the home directory with our script
   home.file.".zsh_custom" = {
     text = zsh_custom_script;
@@ -66,19 +65,12 @@ in
     enableCompletion = true;
     autocd = true;
 
-   enableFzfHistory.enable = true;
+    #   enableFzfHistory.enable = true;
 
     oh-my-zsh = {
       enable = true;
       theme = "cloud";
-      plugins = [
-        "git"
-        "sudo"
-        "vi-mode"
-        "cp"
-        "history"
-        "colorize"
-      ];
+      plugins = [ "git" "sudo" "vi-mode" "cp" "history" "colorize" ];
     };
 
     shellAliases = {
@@ -88,9 +80,12 @@ in
       docker = "podman";
       vim = "hx";
       cat = "bat --style plain --pager never";
-      pull = "cd /data/data/com.termux.nix/files/home/.config/nix-on-droid; git pull";
-      build = "nix-on-droid build --flake /data/data/com.termux.nix/files/home/.config/nix-on-droid";
-      switch = "nix-on-droid switch --flake /data/data/com.termux.nix/files/home/.config/nix-on-droid";
+      pull =
+        "cd /data/data/com.termux.nix/files/home/.config/nix-on-droid; git pull";
+      build =
+        "nix-on-droid build --flake /data/data/com.termux.nix/files/home/.config/nix-on-droid";
+      switch =
+        "nix-on-droid switch --flake /data/data/com.termux.nix/files/home/.config/nix-on-droid";
     };
 
     # 2. Tell .zshrc to source the file we just created
@@ -99,10 +94,5 @@ in
 
   programs.keychain.enable = true;
 
-  home.packages = with pkgs; [
-    zsh-powerlevel10k
-    eza
-    bat
-    keychain
-  ];
+  home.packages = with pkgs; [ zsh-powerlevel10k eza bat keychain ];
 }
